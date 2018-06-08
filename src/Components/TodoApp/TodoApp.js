@@ -52,8 +52,6 @@ function json(response) {
       }).catch(function(error) {
         console.log('Request failed', error);
       });
-
-      return newArray;
    }
 
    update(e){
@@ -84,11 +82,27 @@ function json(response) {
   }
 
   removeItem(e, index) {
-    let array = this.state.todoList;
-    console.log('remove item clicked for index: ' + index)
-    array.splice(index, 1);
-    this.setState({todoList: array});
+    const key = this.state.todoList[index].key;
+    const url = 'http://localhost:5000/api/todo';
+    let newArray = [];
+    fetch(url + '/' + key, {
+      method: 'delete'
+    })
+    .then(status)
+    .then(json)
+    .then((data) => {
+      console.log('Request succeeded with JSON response', data);
+      data.map((item) => (  
+          newArray.push(item)
+      ))
+      console.debug('New array of todo: ', newArray);
+      this.setState({todoList: newArray, filteredList: newArray})
+    }).catch(function(error) {
+      console.log('Request failed', error);
+    });
+     
   }
+
 
   filterList (filter){
     console.log('filter applied with filter: ' + filter)
